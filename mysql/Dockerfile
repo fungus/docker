@@ -1,6 +1,11 @@
 FROM ubuntu:trusty
 MAINTAINER Lonnie Olson <lonnie@lonnieolson.com>
 
+VOLUME /var/lib/mysql
+EXPOSE 3306
+ENTRYPOINT ["/run.sh"]
+CMD ["mysqld"]
+
 # Install MySQL and cleanup
 RUN apt-get -q update
 RUN DEBIAN_FRONTEND=noninteractive apt-get -qy install mysql-server
@@ -19,9 +24,4 @@ RUN touch /firstboot
 # Default admin creds
 ENV MYSQL_USER admin
 ENV MYSQL_PASS admin
-
-VOLUME /var/lib/mysql
-EXPOSE 3306
-ENTRYPOINT ["/run.sh"]
-CMD ["mysqld"]
 

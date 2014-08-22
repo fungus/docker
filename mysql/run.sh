@@ -4,7 +4,7 @@ if [ -f /firstboot ]
 then
 	echo "==== Starting first boot user creation ===="
 	# Start database and wait for finish
-	chown mysql:mysql /var/lib/mysql
+	chown -R mysql:mysql /var/lib/mysql
 	/usr/sbin/mysqld &
 	for i in 1 2 3 5 5 10
 	do

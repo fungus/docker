@@ -23,5 +23,5 @@ ENV MYSQL_PASS admin
 VOLUME /var/lib/mysql
 EXPOSE 3306
 ENTRYPOINT ["/run.sh"]
-CMD ["mysqld"]
+CMD ["/usr/sbin/mysqld"]
 

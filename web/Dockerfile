@@ -1,17 +1,14 @@
 FROM ubuntu:trusty
-
-ENV NGINX_VERSION 1.6.1
-
-VOLUME /var/www
-EXPOSE 80
-CMD ["/usr/local/sbin/nginx"]
+MAINTAINER Lonnie Olson <lonnie@lonnieolson.com>
 
 # Install build dependencies
 RUN sed -i 's/archive.ubuntu.com/mirror.sosstaffing.com/' /etc/apt/sources.list
 RUN apt-get update
+RUN apt-get -y dist-upgrade
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -qy build-essential libssl-dev libpcre3-dev
 
 # Build and install Nginx
+ENV NGINX_VERSION 1.6.1
 RUN mkdir /usr/src/nginx
 WORKDIR /usr/src/nginx
 ADD http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz /usr/src/nginx/nginx.tar.gz
@@ -20,7 +17,6 @@ RUN ./configure \
 		--user=www-data \
 		--group=www-data \
 		--prefix=/usr/local/nginx \
-		--conf-path=/var/www/conf/nginx.conf \
 		--sbin-path=/usr/local/sbin/nginx \
 		--http-log-path=/proc/self/fd/1 \
 		--error-log-path=/proc/self/fd/2 \
@@ -33,9 +29,6 @@ RUN ./configure \
 RUN make -j"$(nproc)" 
 RUN make install
 
-# Configure
-ADD nginx.conf /var/www/conf/
-
 # Cleanup
 WORKDIR /usr/local/nginx
 RUN apt-get -y remove build-essential libssl-dev libpcre3-dev
@@ -44,3 +37,9 @@ RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/*
 RUN rm -rf /usr/src/nginx
 
+# Configure
+ADD nginx.conf /usr/local/nginx/conf/
+
+VOLUME /var/www
+EXPOSE 80
+CMD ["/usr/local/sbin/nginx"]
